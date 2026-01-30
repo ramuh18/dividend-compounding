@@ -15,19 +15,24 @@ BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/"
 EMPIRE_URL = "https://empire-analyst.digital/"
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 
-# [Monetization] 수익화 링크 (Bybit, Amazon)
+# [Monetization] 수익화 링크
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
 AMAZON_LINK = "https://www.amazon.com/s?k=ledger+nano+x&tag=empireanalyst-20"
 
-# [Sitemap Generator] 서치콘솔용 사이트맵 자동 생성
+# [Sitemap Generator] KeyError 방지 로직 추가
 def generate_sitemap(history):
     sitemap_path = os.path.join(BASE_DIR, "sitemap.xml")
-    urls = [f"<url><loc>{BLOG_BASE_URL}</loc><lastmod>{datetime.now().strftime('%Y-%m-%d')}</lastmod><priority>1.0</priority></url>"]
+    today = datetime.now().strftime('%Y-%m-%d')
+    urls = [f"<url><loc>{BLOG_BASE_URL}</loc><lastmod>{today}</lastmod><priority>1.0</priority></url>"]
     for item in history[:50]:
-        urls.append(f"<url><loc>{BLOG_BASE_URL}{item['file']}</loc><lastmod>{item['date']}</lastmod><priority>0.8</priority></url>")
+        # 'date'나 'file' 키가 없을 경우를 대비한 안전장치
+        file_name = item.get('file', '')
+        file_date = item.get('date', today)
+        if file_name:
+            urls.append(f"<url><loc>{BLOG_BASE_URL}{file_name}</loc><lastmod>{file_date}</lastmod><priority>0.8</priority></url>")
     xml_content = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{"".join(urls)}</urlset>'
     with open(sitemap_path, "w", encoding="utf-8") as f: f.write(xml_content)
-    log("📡 Sitemap.xml updated.")
+    log("📡 Sitemap.xml updated safely.")
 
 # [FALLBACK] 분량 보장용 1,500자 리포트
 FALLBACK_REPORT = """
@@ -38,7 +43,7 @@ The dawn of 2026 marks the beginning of the 'Great Decoupling,' where technologi
 Artificial Intelligence has moved beyond simple predictive modeling into the realm of 'Strategic Autonomy.' Modern AI agents are no longer just tools; they are high-frequency decision-makers capable of managing multi-billion dollar liquidity pools with zero human intervention.
 
 ### 2. Hardware Sovereignty in the Age of AI
-Digital sovereignty and hardware-based security have become paramount. For institutional and private investors alike, securing the 'keys' to their digital kingdom via cold storage and decentralized protocols is no longer optional—it is a strategic necessity for long-term survival in an automated market.
+Digital sovereignty and hardware-based security have become paramount. For institutional and private investors alike, securing the 'keys' to their digital kingdom via cold storage and decentralized protocols is no longer optional.
 """
 
 def clean_ai_output(text):
@@ -72,8 +77,8 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
         @media(min-width: 900px) {{ .article-grid {{ grid-template-columns: 1.2fr 1fr; }} }}
         .img-wrapper {{ position: sticky; top: 120px; }}
         .featured-img {{ width: 100%; max-height: 450px; object-fit: cover; border: 1px solid #000; filter: grayscale(100%); }}
-        .img-promo {{ background: #000; color: #fff; padding: 30px; margin-top: 20px; font-size: 1rem; line-height: 1.5; }}
-        .content {{ font-family: 'Playfair Display', serif; font-size: 1.3rem; text-align: justify; }}
+        .img-promo {{ background: #000; color: #fff; padding: 30px; margin-top: 20px; font-size: 1.1rem; line-height: 1.5; font-weight: 700; text-align: center; }}
+        .content {{ font-family: 'Playfair Display', serif; font-size: 1.35rem; text-align: justify; }}
         .content h2 {{ font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.8rem; border-bottom: 6px solid #000; padding-bottom: 10px; margin-top: 40px; text-transform: uppercase; }}
         .sidebar {{ position: sticky; top: 120px; height: fit-content; border-left: 2px solid #000; padding-left: 45px; }}
         .ad-btn {{ display: block; padding: 20px; margin-bottom: 15px; background: #000; color: #fff; text-align: center; text-decoration: none; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }}
@@ -88,7 +93,7 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
             <div class="content">{body_html}</div>
             <div class="img-wrapper">
                 <img src="{img_url}" class="featured-img">
-                <div class="img-promo">🚀 <b>Alpha Insight:</b><br>This tech shift is rewriting asset values. <br><a href="{EMPIRE_URL}" style="color:#fff;">Access Private Signals at Empire Analyst HQ →</a></div>
+                <div class="img-promo">🚀 <b>Alpha Insight:</b><br>This tech shift is rewriting asset values. <br><br><a href="{EMPIRE_URL}" style="color:#fff; text-decoration: underline;">Access Private Signals at Empire Analyst HQ →</a></div>
             </div>
         </div>
     </main>
@@ -102,7 +107,7 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
     <footer><div>&copy; 2026 ALPHA INTELLIGENCE. Part of Empire Analyst Network.</div><div>Amazon Disclaimer: As an Amazon Associate, I earn from qualifying purchases.</div></footer></body></html>"""
 
 def main():
-    log("🏁 Striker #2 Final Robust Version Started")
+    log("🏁 Striker #2 Fixed Version Started")
     topic = "The Convergence of AI and Future Wealth Protection"
     p1 = generate_part(topic, "Innovation")
     p2 = generate_part(topic, "Execution")
@@ -110,12 +115,14 @@ def main():
     if len(full_content) < 1000: full_content = FALLBACK_REPORT
     
     html_body = markdown.markdown(full_content)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('minimal hardware gadget gadget black and white studio 8k')}"
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('minimal hardware gadget black and white studio 8k')}"
     
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
-    sidebar_html = "".join([f"<li>• <a href='{BLOG_BASE_URL}{h['file']}' style='text-decoration:none; color:#000;'>{h['title']}</a></li>" for h in history[:6]])
+    
+    # 사이드바 링크 생성 (KeyError 방지)
+    sidebar_html = "".join([f"<li>• <a href='{BLOG_BASE_URL}{h.get('file','')}' style='text-decoration:none; color:#000;'>{h.get('title','Recent Intel')}</a></li>" for h in history[:6]])
     
     archive_name = f"post_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
     history.insert(0, {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_name})
