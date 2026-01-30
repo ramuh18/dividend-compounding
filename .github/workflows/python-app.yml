@@ -1,0 +1,35 @@
+name: Dividend Striker Bot
+
+on:
+  schedule:
+    - cron: '15 3,9,15,21 * * *'  # 6시간마다 15분에 실행
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: pip install requests markdown feedparser
+    - name: Run Bot
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python zombie_bot.py
+    - name: Commit and push
+      run: |
+        git config --global user.name "Dividend Master"
+        git config --global user.email "bot@empire-analyst.digital"
+        git add .
+        git commit -m "New Dividend Report" || echo "No changes"
+        git pull --rebase origin main
+        git push
