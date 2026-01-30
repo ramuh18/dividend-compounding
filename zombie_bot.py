@@ -1,143 +1,172 @@
 import os, json, random, requests, markdown, urllib.parse, feedparser, time, re, sys, io
 from datetime import datetime
 
-# 시스템 인코딩 강제 설정 (외계어 방지)
+# [System] Force UTF-8 for special characters and symbols
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 
 def log(msg): print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
-# [설정]
+# [Configuration]
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 BLOG_TITLE = "Dividend Master"
-# ★ 2호기 주소로 꼭 변경!
+# ★ 2호기 전용 주소
 BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/"
-# ★ 본진 주소 (수익의 핵심)
+# ★ 수익의 심장: 본진 주소
 MAIN_HQ_URL = "https://empire-analyst.digital/"
+
+# [Monetization - Affiliate Links]
+AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
+AMAZON_TAG = "empireanalyst-20"
+AMAZON_LINK = f"https://www.amazon.com/s?k=ledger+nano+x&tag={AMAZON_TAG}"
+
 HISTORY_FILE = "history.json"
 
 # ==========================================
-# [강력 세척] AI 혼잣말 & 생각 과정 제거
+# [Cleaner] Remove AI Reasoning & Noise
 # ==========================================
 def clean_ai_output(text):
     if not text: return ""
-    # 1. JSON 형태의 생각 과정 삭제
     text = re.sub(r'\{"role":.*?"content":', '', text, flags=re.DOTALL)
     text = re.sub(r'reasoning_content":".*?"', '', text, flags=re.DOTALL)
-    
-    # 2. "Let's count words", "Draft:" 같은 잡담 삭제
-    patterns = [
-        r"Draft:", r"Word count:", r"Let's write", r"Note:", r"Internal Monologue:",
-        r"I'll count manually", r"Now count words", r"Start directly with the content"
-    ]
-    for p in patterns:
-        text = re.sub(p, "", text, flags=re.IGNORECASE)
-    
-    # 3. 불필요한 기호 및 따옴표 정리
     text = text.replace('"}', '').replace('"', '').replace("'", "")
+    # Remove internal monologues
+    patterns = [r"Draft:", r"Word count:", r"Note:", r"Internal Monologue:", r"Thinking:"]
+    for p in patterns: text = re.sub(p, "", text, flags=re.IGNORECASE)
     return text.strip()
 
 # ==========================================
-# [주제 선정] 6시간마다 새로운 뉴스 가져오기
+# [Topic & Hook Title] Catchy Financial Titles
 # ==========================================
 def get_hot_topic():
     try:
-        # 뉴스 소스: 개인 금융 & 투자 뉴스
         feed = feedparser.parse("https://news.google.com/rss/topics/CAAqJggBCiCPASowCAcLCzIxY2J1c2luZXNzX2VkaXRpb25fZW5fdXMvYnVzaW5lc3NfZWRpdGlvbl9lbl91cw?hl=en-US&gl=US&ceid=US:en")
         raw_news = random.choice(feed.entries[:10]).title
-    except: raw_news = "The Power of Passive Income and Dividends"
+    except: raw_news = "The Secret of Compound Interest and Wealth"
 
-    prompt = f"Rewrite '{raw_news}' into a high-end financial title (MAX 9 WORDS). Focus on dividend growth. English Only. NO intro/outro."
+    # 후킹 있는 제목 생성을 위한 프롬프트
+    prompt = f"Rewrite '{raw_news}' into a viral, high-end financial title (MAX 9 WORDS). Use words like 'Secret', 'Blueprint', 'Shocking', 'Wealth'. English Only."
     
-    title = "Dividend Growth Intelligence"
+    title = "Dividend Strategy Masterclass"
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.1}}, timeout=15)
+        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.5}}, timeout=15)
         if resp.status_code == 200:
             title = clean_ai_output(resp.json()['candidates'][0]['content']['parts'][0]['text'])
     except: pass
     return title
 
 # ==========================================
-# [본문 생성] 본진으로 트래픽을 몰아주는 페르소나
+# [Content] Deep Analysis + Internal Linking
 # ==========================================
 def generate_part(topic, focus):
-    prompt = f"Write a professional report on '{topic}'. Focus: {focus}. Emphasize compounding wealth and dividends. Institutional tone. English Only. Output ONLY final article text. NO thinking, NO counting."
+    prompt = f"Write a professional deep-dive report on '{topic}'. Focus: {focus}. Discuss long-term dividend strategies. Use Markdown. Institutional tone. English Only. Output ONLY the article text."
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.2}}, timeout=30)
+        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.3}}, timeout=30)
         if resp.status_code == 200:
             return clean_ai_output(resp.json()['candidates'][0]['content']['parts'][0]['text'])
-    except: pass
-    return "Market analysis in progress..."
+    except: return "Intelligence gathering in progress..."
 
-def create_professional_html(topic, img_url, body_html, canonical_url):
+# ==========================================
+# [HTML] Advanced Template with HQ Funnel
+# ==========================================
+def create_professional_html(topic, img_url, body_html, sidebar_html, canonical_url):
     current_date = datetime.now().strftime("%Y-%m-%d")
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{topic} | Dividend Master</title>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+    <title>{topic} | {BLOG_TITLE}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Roboto:wght@400;900&display=swap" rel="stylesheet">
     <style>
-        body {{ font-family: 'Merriweather', serif; line-height: 1.8; color: #334155; max-width: 850px; margin: 0 auto; padding: 20px; }}
-        header {{ background: #0f172a; color: white; padding: 50px 20px; text-align: center; border-radius: 15px; margin-bottom: 40px; border-bottom: 5px solid #fbbf24; }}
-        .hq-link {{ display: inline-block; background: #fbbf24; color: #0f172a; padding: 12px 25px; border-radius: 8px; font-weight: bold; text-decoration: none; margin-top: 20px; transition: 0.3s; }}
-        .hq-link:hover {{ transform: scale(1.05); }}
-        h1 {{ font-size: 2.8rem; color: #0f172a; margin: 30px 0; line-height: 1.2; }}
-        .featured-img {{ width: 100%; border-radius: 12px; margin-bottom: 35px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }}
-        .newsletter-box {{ background: #f1f5f9; padding: 40px; border-radius: 15px; text-align: center; margin-top: 60px; border: 1px solid #cbd5e1; }}
-        .sub-btn {{ background: #b91c1c; color: white; border: none; padding: 12px 35px; border-radius: 6px; font-weight: bold; cursor: pointer; }}
+        :root {{ --primary: #0f172a; --accent: #b91c1c; --gold: #fbbf24; }}
+        body {{ font-family: 'Merriweather', serif; line-height: 1.8; color: #334155; max-width: 1100px; margin: 0 auto; padding: 20px; }}
+        header {{ background: var(--primary); color: white; padding: 50px 20px; text-align: center; border-radius: 15px; margin-bottom: 40px; border-bottom: 5px solid var(--gold); }}
+        .hq-funnel {{ background: #fff3cd; padding: 20px; border-radius: 10px; border: 1px solid var(--gold); margin-bottom: 30px; text-align: center; font-weight: bold; }}
+        .container {{ display: grid; grid-template-columns: 1fr; gap: 40px; }}
+        @media(min-width: 900px) {{ .container {{ grid-template-columns: 2.4fr 1fr; }} }}
+        .featured-img {{ width: 100%; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }}
+        .ad-button {{ display: block; padding: 15px; margin-bottom: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 900; transition: 0.2s; }}
+        .btn-main {{ background: var(--gold); color: var(--primary); border: 2px solid var(--gold); }}
+        .btn-bybit {{ border: 2px solid #f59e0b; color: #f59e0b; }}
+        .btn-amazon {{ border: 2px solid #ea580c; color: #ea580c; }}
+        .recent-list {{ list-style: none; padding: 0; }}
+        .recent-list li {{ padding: 10px 0; border-bottom: 1px solid #eee; }}
+        .recent-list a {{ text-decoration: none; color: #0f172a; font-weight: bold; font-size: 0.9rem; }}
     </style></head>
     <body>
     <header>
-        <div style="font-size: 2.2rem; font-weight: 900; letter-spacing: 1px;">DIVIDEND MASTER</div>
-        <p style="opacity: 0.8;">Institutional Grade Research on Compound Wealth</p>
-        <a href="{MAIN_HQ_URL}" class="hq-link">Expert Analysis at Empire Analyst HQ →</a>
+        <div style="font-size: 2.5rem; font-weight: 900; letter-spacing: 2px;">{BLOG_TITLE}</div>
+        <p>Strategic Wealth Intelligence Hub</p>
     </header>
-    <main>
-        <div style="color: #b91c1c; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">{current_date} • Intelligence Report</div>
-        <h1>{topic}</h1>
-        <img src="{img_url}" class="featured-img">
-        <div class="content">{body_html}</div>
-    </main>
-    <div class="newsletter-box">
-        <h3>📩 Secure Your Financial Future</h3>
-        <p>Subscribe to our Weekly Dividend Digest and get our '2026 High-Yield' watchlist.</p>
-        <form action="YOUR_NEWSLETTER_URL" method="post">
-            <input type="email" placeholder="Your best email address" required style="padding: 13px; width: 65%; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom:10px;">
-            <button type="submit" class="sub-btn">Join Now</button>
-        </form>
+    <div class="hq-funnel">
+        ⚠️ DO NOT INVEST WITHOUT DATA. <a href="{MAIN_HQ_URL}" style="color:var(--accent);">Access the Elite Market Analysis at Empire Analyst HQ →</a>
     </div>
-    <footer style="margin-top: 80px; text-align: center; color: #94a3b8; font-size: 0.85rem; border-top: 1px solid #e2e8f0; padding-top: 30px;">
-        &copy; 2026 Dividend Master. A strategic node of <a href="{MAIN_HQ_URL}" style="color:#64748b;">Empire Analyst Network</a>.
-    </footer>
-    </body></html>"""
+    <div class="container">
+        <main>
+            <div style="color: var(--accent); font-weight: 900; text-transform: uppercase;">{current_date} • PRIVATE REPORT</div>
+            <h1 style="font-size: 2.6rem;">{topic}</h1>
+            <img src="{img_url}" class="featured-img">
+            <div class="content">{body_html}</div>
+            
+            <div style="background:#f8fafc; padding:30px; border-radius:12px; margin-top:50px; text-align:center; border: 1px dashed var(--primary);">
+                <h3>📩 FREE COMPOUNDING BLUEPRINT</h3>
+                <p>Subscribe to join 10,000+ elite investors.</p>
+                <form action="YOUR_NEWSLETTER_URL" method="post">
+                    <input type="email" placeholder="Your best email" required style="padding:12px; width:60%; border-radius:5px; border:1px solid #ddd;">
+                    <button type="submit" style="background:var(--primary); color:white; padding:12px 25px; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">GET ACCESS</button>
+                </form>
+            </div>
+        </main>
+        <aside>
+            <div style="position: sticky; top: 20px;">
+                <h3 style="border-bottom: 3px solid var(--primary); padding-bottom: 5px;">🔥 CAPITAL ASSETS</h3>
+                <a href="{MAIN_HQ_URL}" class="ad-button btn-main">EMPIRE ANALYST HQ</a>
+                <a href="{AFFILIATE_LINK}" class="ad-button btn-bybit">💰 BYBIT $30,000 BONUS</a>
+                <a href="{AMAZON_LINK}" class="ad-button btn-amazon">🛡️ SECURE YOUR ASSETS</a>
+                
+                <h3 style="margin-top:40px; border-bottom: 3px solid var(--primary); padding-bottom: 5px;">📂 RECENT INTELLIGENCE</h3>
+                <ul class="recent-list">{sidebar_html}</ul>
+            </div>
+        </aside>
+    </div>
+    <footer style="margin-top: 80px; text-align: center; color: #94a3b8; border-top: 1px solid #eee; padding-top: 30px;">
+        &copy; 2026 {BLOG_TITLE}. Part of the <a href="{MAIN_HQ_URL}" style="color:#64748b;">Empire Analyst Network</a>.
+    </footer></body></html>"""
 
 def main():
-    log("🏁 Striker #2 (Dividend) Active")
+    log("🏁 Striker #2 Engaged")
     topic = get_hot_topic()
-    log(f"🔥 Subject: {topic}")
+    log(f"🔥 Target Subject: {topic}")
     
-    content = ""
-    content += generate_part(topic, "Macro-Economic Impact on Yields") + "\n\n"
-    content += generate_part(topic, "Long-term Compounding Strategies")
+    # Generate long content (2 parts)
+    p1 = generate_part(topic, "Macro Outlook & Dividend Trends")
+    p2 = generate_part(topic, "Strategic Wealth Allocation & Risk")
+    full_markdown = f"{p1}\n\n{p2}"
+    html_body = markdown.markdown(full_markdown)
     
-    html_body = markdown.markdown(content)
-    # 이미지 생성 (차트 느낌)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional stock market chart showing upward trend, luxury financial theme, gold and navy')}"
+    img_prompt = f"professional gold investment chart upward trend luxury dark theme high resolution"
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(img_prompt)}"
     
     file_timestamp = datetime.now().strftime("%Y%m%d_%H%M")
     archive_filename = f"post_{file_timestamp}.html"
     
+    # Load History for Sidebar (Internal Linking)
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
     
+    sidebar_html = ""
+    for h in history[:5]:
+        sidebar_html += f"<li><a href='{BLOG_BASE_URL}{h['file']}'>{h['title']}</a></li>"
+    
+    # Save History
     new_entry = {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_filename}
     history.insert(0, new_entry)
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
     
-    full_html = create_professional_html(topic, img_url, html_body, f"{BLOG_BASE_URL}{archive_filename}")
+    # Final HTML
+    full_html = create_professional_html(topic, img_url, html_body, sidebar_html, f"{BLOG_BASE_URL}{archive_filename}")
     
     with open("index.html", "w", encoding="utf-8") as f: f.write(full_html)
     with open(archive_filename, "w", encoding="utf-8") as f: f.write(full_html)
-    log("✅ Mission Complete")
+    log("✅ Intelligence Report Published")
 
 if __name__ == "__main__": main()
