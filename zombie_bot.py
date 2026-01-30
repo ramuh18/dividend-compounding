@@ -17,20 +17,25 @@ HISTORY_FILE = "history.json"
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
 AMAZON_LINK = f"https://www.amazon.com/s?k=ledger+nano+x&tag=empireanalyst-20"
 
-# [FALLBACK] 1,500자 이상의 고품질 리포트 유지
+# ==========================================
+# [FALLBACK CONTENT] 정밀 조정된 1,500자 전문 리포트
+# ==========================================
 FALLBACK_REPORT = """
 ## The Great Decoupling: How Autonomous Intelligence Rewrites Global Capitalism
 
 The dawn of 2026 marks the beginning of the 'Great Decoupling,' where technological advancement and human labor cost are finally severed by the massive deployment of institutional-grade AI.
 
 ### 1. The Genesis of Cognitive Capitalism
-Artificial Intelligence has moved beyond simple predictive modeling into the realm of 'Strategic Autonomy.' Modern AI agents are no longer just tools; they are high-frequency decision-makers capable of managing multi-billion dollar liquidity pools with zero human intervention.
+Artificial Intelligence has moved beyond simple predictive modeling into the realm of 'Strategic Autonomy.' Modern AI agents are no longer just tools; they are high-frequency decision-makers capable of managing multi-billion dollar liquidity pools with zero human intervention. This shift marks the rise of Cognitive Capitalism, where the primary driver of GDP is no longer traditional manufacturing or human services, but the algorithmic generation of intelligence and predictive value.
 
 ### 2. Market Volatility and the New 'Alpha'
-In this automated landscape, traditional market analysis is becoming obsolete. The 'Alpha' of tomorrow is hidden within the data silos of autonomous networks. Investors who continue to rely on manual intelligence are facing an existential risk.
+In this automated landscape, traditional market analysis is becoming obsolete. The 'Alpha' of tomorrow is hidden within the data silos of autonomous networks. Investors who continue to rely on manual intelligence are facing an existential risk. The current market dynamics demand a transition to decentralized, hardware-secured asset management. Cold storage solutions and institutional-grade encryption are the only remaining defenses against the volatility induced by high-speed algorithmic trading.
 
 ### 3. Institutional Asset Protection
-As the labor-based economy fades, the preservation of capital through physical and digital security becomes the only viable long-term strategy. Cold storage solutions and institutional-grade encryption are the only remaining defenses against the volatility induced by high-speed algorithmic trading.
+As the labor-based economy fades, the preservation of capital through physical and digital security becomes the only viable long-term strategy. The convergence of AI-driven market cycles requires a disciplined approach to asset protection. We are seeing a mass migration of sophisticated capital toward platforms that offer not just data, but deep-tier, verifiable market intelligence and absolute sovereignty over private keys. The decoupling of value from human oversight necessitates a rigorous new protocol for wealth defense.
+
+### 4. Conclusion: Strategic Positioning
+The path to wealth in 2026 is paved with advanced technology and uncompromising security. To thrive, one must align their portfolio with the architectural shifts of the new digital age. The era of passive observation is over; the era of strategic algorithmic positioning has begun.
 """
 
 def clean_ai_output(text):
@@ -41,11 +46,11 @@ def clean_ai_output(text):
 
 def generate_part(topic, focus):
     safety = [{"category": f"HARM_CATEGORY_{c}", "threshold": "BLOCK_NONE"} for c in ["HARASSMENT", "HATE_SPEECH", "SEXUALLY_EXPLICIT", "DANGEROUS_CONTENT"]]
-    prompt = f"Write a 500-word deep-tier institutional analysis on '{topic}'. Focus: {focus}. High-end tone. Markdown. English Only."
+    prompt = f"Write a professional institutional analysis on '{topic}'. Focus: {focus}. Min 450 words. Institutional tone. Markdown. English Only."
     for attempt in range(2):
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-            resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "safetySettings": safety, "generationConfig": {"temperature": 0.4}}, timeout=30)
+            resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "safetySettings": safety, "generationConfig": {"temperature": 0.3}}, timeout=30)
             if resp.status_code == 200:
                 res = clean_ai_output(resp.json()['candidates'][0]['content']['parts'][0]['text'])
                 if len(res) > 350: return res
@@ -66,9 +71,8 @@ def create_ultra_wide_html(topic, img_url, body_html, sidebar_html, canonical_ur
         h1 {{ font-family: 'Playfair Display', serif; font-size: 4.5rem; font-weight: 900; line-height: 1.1; margin: 0 0 40px 0; letter-spacing: -3px; text-transform: uppercase; }}
         .featured-img {{ width: 100%; height: 600px; object-fit: cover; filter: grayscale(100%); border: 1px solid #000; }}
         .sidebar {{ position: sticky; top: 120px; height: fit-content; border-left: 4px solid #000; padding-left: 50px; }}
-        .ad-btn {{ display: block; padding: 22px; margin-bottom: 15px; text-decoration: none; text-align: center; font-weight: 900; background: #000; color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px; border: 1px solid #000; }}
-        /* 알림 박스 디자인 정돈 */
-        .alpha-box {{ background: #000; color: #fff; padding: 45px; margin: 50px 0; text-align: center; border: 1px solid #000; }}
+        .ad-btn {{ display: block; padding: 22px; margin-bottom: 15px; text-decoration: none; text-align: center; font-weight: 900; background: #000; color: #fff; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px; }}
+        .alpha-box {{ background: #000; color: #fff; padding: 45px; margin: 50px 0; text-align: center; }}
         .alpha-box-inner {{ max-width: 900px; margin: 0 auto; }}
         .alpha-box a {{ color: #fff; font-weight: 900; text-decoration: underline; text-underline-offset: 4px; }}
         .content {{ font-size: 1.4rem; text-align: justify; }}
@@ -76,7 +80,7 @@ def create_ultra_wide_html(topic, img_url, body_html, sidebar_html, canonical_ur
         footer {{ background: #000; color: #444; padding: 80px 0; text-align: center; font-size: 0.8rem; margin-top: 120px; }}
     </style></head>
     <body>
-    <header><div style="font-weight:900; font-size:1.6rem; letter-spacing:-1px;">{BLOG_TITLE}</div><a href="{EMPIRE_URL}" style="color:#000; text-decoration:none; font-weight:900; border:3px solid #000; padding:8px 20px;">ACCESS TERMINAL</a></header>
+    <header><div style="font-weight:900; font-size:1.6rem; letter-spacing:-1px;">{BLOG_TITLE}</div><a href="{EMPIRE_URL}" style="color:#000; text-decoration:none; font-weight:900; border:3px solid #000; padding:8px 20px;">ACCESS HQ</a></header>
     <div class="container">
         <main>
             <h1>{topic}</h1>
@@ -96,19 +100,19 @@ def create_ultra_wide_html(topic, img_url, body_html, sidebar_html, canonical_ur
         <aside class="sidebar">
             <h4 style="text-transform:uppercase; letter-spacing:4px; font-size:0.85rem; margin-bottom:40px; color:#aaa;">Strategic Access</h4>
             <a href="{EMPIRE_URL}" class="ad-btn">Private HQ Terminal</a>
-            <a href="{AFFILIATE_LINK}" class="ad-btn" style="background:#fff; color:#000;">Bybit $30k Bonus</a>
-            <a href="{AMAZON_LINK}" class="ad-btn" style="background:#fff; color:#000;">Hardware Security</a>
+            <a href="{AFFILIATE_LINK}" class="ad-btn" style="background:#fff; color:#000; border:3px solid #000;">Bybit $30k Bonus</a>
+            <a href="{AMAZON_LINK}" class="ad-btn" style="background:#fff; color:#000; border:3px solid #000;">Hardware Security</a>
             <h4 style="margin-top:80px; text-transform:uppercase; letter-spacing:4px; font-size:0.85rem; color:#aaa;">Recent Intel</h4>
             <ul style="list-style:none; padding:0; font-size:1.05rem; line-height:2.6;">{sidebar_html}</ul>
         </aside>
     </div>
     <footer>
         <p>&copy; 2026 {BLOG_TITLE}. A Strategic Partner of the Empire Analyst Network.</p>
-        <p style="max-width:850px; margin:25px auto; opacity:0.4;"><b>Amazon Disclaimer:</b> As an Amazon Associate, I earn from qualifying purchases. No financial advice provided.</p>
+        <p style="max-width:850px; margin:25px auto; opacity:0.4;"><b>Amazon Disclaimer:</b> As an Amazon Associate, I earn from qualifying purchases.</p>
     </footer></body></html>"""
 
 def main():
-    log("🏁 Striker #2 Ultra-Wide B&W Refined")
+    log("🏁 Striker #2 Robust B&W Engaged")
     topic = "The Convergence of AI and Future Wealth Architectures"
     p1 = generate_part(topic, "Technological Shifts")
     p2 = generate_part(topic, "Market Decoupling")
@@ -117,7 +121,7 @@ def main():
     if len(full_content) < 1000: full_content = FALLBACK_REPORT
     
     html_body = markdown.markdown(full_content)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional minimal humanoid robot interface black and white architecture 8k')}"
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('minimal professional humanoid robot interface black and white architecture 8k')}"
     
     history = []
     if os.path.exists(HISTORY_FILE):
