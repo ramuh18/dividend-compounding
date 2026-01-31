@@ -6,15 +6,15 @@ sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# [Configuration] 2호기 전용 설정
+# [Configuration] 2호기 설정
 BLOG_TITLE = "Alpha Intelligence" 
 BLOG_BASE_URL = "https://ramuh18.github.io/alpha-intelligence/" 
 EMPIRE_URL = "https://empire-analyst.digital/"
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
-AMAZON_LINK = "https://www.amazon.com/s?k=ledger+nano+x&tag=empireanalyst-20"
+# 아마존 링크는 스마트 매칭 함수에서 생성
 
-# [주제 리스트 50개]
+# [주제 리스트 50개: 퀀트/보안/데이터]
 BACKUP_TOPICS = [
     "Quantum Computing Risks in Finance", "Algorithmic Trading Strategies", "Zero-Knowledge Proofs Explained",
     "Cold Storage Security Protocols", "High-Frequency Trading Impact", "Dividend Aristocrats Analysis",
@@ -56,10 +56,6 @@ CONTENT_BLOCKS = [
     """
     ## Asset Sovereignity Strategy
     **{topic}** highlights the critical need for asset sovereignty. If you rely on third-party custodians to manage the risks of {topic}, you are exposing yourself to counterparty risk.
-    <div style="margin: 20px 0; padding: 15px; background: #f0fdf4; border-left: 5px solid #059669;">
-        <strong>🛡️ Security Alert:</strong> Take control of your keys. 
-        <a href="{AMAZON_LINK}" style="color: #059669; font-weight: bold;">[Recommended Hardware Wallets]</a>
-    </div>
     """,
     """
     ## Decentralization vs Centralization
@@ -103,6 +99,28 @@ CONTENT_BLOCKS = [
     """
 ]
 
+# [2호기 전용 스마트 매칭]
+def get_smart_amazon_link(topic):
+    topic_lower = topic.lower()
+    search_keyword = "ledger+nano+x" # 기본값 (보안 중시)
+    button_text = "🔒 SECURE COLD STORAGE"
+
+    # 주제별 키워드 매칭
+    if any(x in topic_lower for x in ["trading", "algo", "quant", "chart", "monitor"]):
+        search_keyword = "trading+monitor+setup"
+        button_text = "🖥️ PRO TRADING GEAR"
+    elif any(x in topic_lower for x in ["book", "learn", "math", "strategy"]):
+        search_keyword = "quantitative+trading+books"
+        button_text = "📚 QUANT STRATEGIES"
+    elif any(x in topic_lower for x in ["security", "hack", "protection", "wallet", "key"]):
+        search_keyword = "yubikey+security+key"
+        button_text = "🔑 YUBIKEY SECURITY"
+    elif any(x in topic_lower for x in ["privacy", "data", "encryption"]):
+        search_keyword = "encrypted+usb+drive"
+        button_text = "💾 ENCRYPTED DRIVE"
+    
+    return f"https://www.amazon.com/s?k={search_keyword}&tag=empireanalyst-20", button_text
+
 def get_live_trends():
     selected_topic = random.choice(BACKUP_TOPICS)
     return [selected_topic]
@@ -116,12 +134,31 @@ def generate_deep_report(topic):
 Our algorithmic indicators have flagged significant activity regarding **{topic}**. In a market driven by data, understanding the underlying metrics of {topic} provides a distinct edge. This report analyzes the technical and fundamental vectors of {topic}.
 """
     
-    # [핵심 수정] 7개 -> 4개로 축소 (약 1300자 내외의 최적 길이)
+    # [스마트 매칭 호출]
+    amazon_url, btn_text = get_smart_amazon_link(topic)
+
+    # 본문 조립 (랜덤 4개)
     selected_blocks = random.sample(CONTENT_BLOCKS, 4)
     body_content = ""
-    for block in selected_blocks:
-        clean_block = textwrap.dedent(block)
-        body_content += clean_block.format(topic=topic, AMAZON_LINK=AMAZON_LINK) + "\n"
+    
+    # 앞부분 2개
+    for block in selected_blocks[:2]:
+        body_content += textwrap.dedent(block).format(topic=topic) + "\n"
+
+    # ▼▼▼▼ [중간 광고 박스] 2호기 테마 (청록색/그레이) ▼▼▼▼
+    body_content += f"""
+<div style="margin: 30px 0; padding: 20px; background: #f1f5f9; border-left: 5px solid #06b6d4; border-radius: 4px;">
+    <h3 style="margin-top:0; color:#1e293b;">⚠️ SYSTEM SECURITY ALERT</h3>
+    <p>Operational risks regarding <strong>{topic}</strong> are elevated. Ensure hardware isolation immediately.</p>
+    <a href="{amazon_url}" style="display:inline-block; background:#1e293b; color:#fff; padding:10px 20px; text-decoration:none; font-weight:bold; border-radius:4px;">{btn_text}</a>
+    <a href="{AFFILIATE_LINK}" style="display:inline-block; background:#06b6d4; color:#000; padding:10px 20px; text-decoration:none; font-weight:bold; border-radius:4px; margin-left:10px;">⚡ EXECUTE ALPHA</a>
+</div>
+"""
+    # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    # 뒷부분 2개
+    for block in selected_blocks[2:]:
+        body_content += textwrap.dedent(block).format(topic=topic) + "\n"
 
     # 결론
     conclusion = f"""
@@ -150,17 +187,19 @@ def generate_seo_files(history):
     robots = f"User-agent: *\nAllow: /\nSitemap: {BLOG_BASE_URL}sitemap.xml"
     with open("robots.txt", "w", encoding="utf-8") as f: f.write(robots)
 
-def create_final_html(topic, img_url, body_html, sidebar_html):
+def create_final_html(topic, img_url, body_html, sidebar_html, amazon_url, btn_text):
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="여기에_인증태그_입력" />
     <title>{topic} | {BLOG_TITLE}</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* 2호기 전용 테마: 실버/다크그레이/청록색(Cyan) */
         :root {{ --main-dark: #1e293b; --accent-cyan: #06b6d4; --silver-bg: #f1f5f9; }}
         body {{ font-family: 'Roboto Mono', monospace; background: var(--silver-bg); color: #334155; line-height: 1.7; margin: 0; }}
         header {{ background: var(--main-dark); color: #fff; padding: 25px; text-align: center; border-bottom: 4px solid var(--accent-cyan); }}
         .brand {{ font-family: 'Orbitron', sans-serif; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; }}
+        /* 표준 너비 1100px 적용 */
         .container {{ max-width: 1100px; margin: 40px auto; display: grid; grid-template-columns: 1fr 320px; gap: 40px; padding: 0 20px; }}
         @media(max-width: 900px) {{ .container {{ grid-template-columns: 1fr; }} }}
         main {{ background: #fff; padding: 50px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 4px; }}
@@ -189,7 +228,7 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
                 <h3 style="margin-top:0; color:var(--main-dark); font-family:'Orbitron';">SYSTEM ACCESS</h3>
                 <a href="{EMPIRE_URL}" class="btn">⚡ ALPHA STRATEGY</a>
                 <a href="{AFFILIATE_LINK}" class="btn" style="background:#334155;">📊 DATA TERMINAL</a>
-                <a href="{AMAZON_LINK}" class="btn" style="background:#06b6d4; color:#000;">🔒 COLD STORAGE</a>
+                <a href="{amazon_url}" class="btn" style="background:#06b6d4; color:#000;">{btn_text}</a>
             </div>
             <div class="side-card">
                 <h3>Incoming Signals</h3>
@@ -220,8 +259,13 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
 
 def main():
     topic = get_live_trends()[0] 
+    
+    # [스마트 매칭 실행]
+    amazon_url, btn_text = get_smart_amazon_link(topic)
+
     body_text = generate_deep_report(topic) 
     html_body = markdown.markdown(body_text)
+    
     img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('futuristic financial data hud interface silver blue cyberpunk 8k')}?width=1200&height=600"
     
     history = []
@@ -236,7 +280,8 @@ def main():
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
     generate_seo_files(history)
     
-    full_html = create_final_html(topic, img_url, html_body, sidebar_html)
+    # [HTML 생성] 동적 링크 전달
+    full_html = create_final_html(topic, img_url, html_body, sidebar_html, amazon_url, btn_text)
     with open("index.html", "w", encoding="utf-8") as f: f.write(full_html)
     with open(archive_name, "w", encoding="utf-8") as f: f.write(full_html)
 
