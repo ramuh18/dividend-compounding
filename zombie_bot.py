@@ -1,131 +1,127 @@
-import os, json, random, requests, markdown, urllib.parse, feedparser, time, re, sys, io
+import os, json, random, requests, markdown, urllib.parse, time, re, sys, io
 from datetime import datetime
 
+# [SYSTEM] 한글 및 특수문자 깨짐 방지
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def log(msg): print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-BLOG_TITLE = "ALPHA INTELLIGENCE"
-BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/"
+# [Configuration] ★2호기 설정★
+BLOG_TITLE = "Alpha Intelligence" 
+BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/" 
 EMPIRE_URL = "https://empire-analyst.digital/"
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
 AMAZON_LINK = "https://www.amazon.com/s?k=ledger+nano+x&tag=empireanalyst-20"
 
-def generate_sitemap(history):
-    sitemap_path = os.path.join(BASE_DIR, "sitemap.xml")
-    today = datetime.now().strftime('%Y-%m-%d')
-    urls = [f"<url><loc>{BLOG_BASE_URL}</loc><lastmod>{today}</lastmod><priority>1.0</priority></url>"]
-    for item in history[:50]:
-        file_name = item.get('file', '')
-        file_date = item.get('date', today)
-        if file_name:
-            urls.append(f"<url><loc>{BLOG_BASE_URL}{file_name}</loc><lastmod>{file_date}</lastmod><priority>0.8</priority></url>")
-    xml_content = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{"".join(urls)}</urlset>'
-    with open(sitemap_path, "w", encoding="utf-8") as f: f.write(xml_content)
-    log("📡 Sitemap.xml updated.")
-
-# [FALLBACK] 폰트는 1.05rem 기준, 1,500자 이상으로 꽉 채운 텍스트
-FALLBACK_REPORT = """
-## The Architectural Evolution of Cognitive Wealth In 2026
-
-The dawn of 2026 marks the beginning of the 'Great Decoupling,' where technological advancement and human labor cost are finally severed by the massive deployment of institutional-grade AI. We are witnessing the most significant transformation of the global financial architecture since the Bretton Woods Agreement.
-
-### 1. The Rise of Cognitive Capitalism
-Artificial Intelligence has moved beyond simple predictive modeling into the realm of 'Strategic Autonomy.' Modern AI agents are no longer just tools; they are high-frequency decision-makers capable of managing multi-billion dollar liquidity pools with zero human intervention. This shift marks the rise of Cognitive Capitalism, where the primary driver of GDP is no longer traditional manufacturing or human services, but the algorithmic generation of intelligence and predictive value. The velocity of capital is being redefined by machine learning cycles that operate at a scale far beyond human cognitive capacity. Those who fail to integrate these autonomous systems into their wealth preservation strategy will face a terminal disadvantage in the global market hierarchy.
-
-### 2. Hardware Sovereignty and Cold Storage Defense
-As AI consumes a larger share of global GDP, the concept of wealth preservation has evolved. Digital sovereignty and hardware-based security have become paramount. For institutional and private investors alike, securing the 'keys' to their digital kingdom via cold storage and decentralized protocols is no longer optional—it is a strategic necessity for long-term survival in an automated market. As the labor-based economy fades, the preservation of capital through physical and digital security becomes the only viable long-term strategy. The convergence of AI-driven market cycles requires a disciplined approach to asset protection, focusing on cryptographic integrity and real-time risk mitigation.
-
-### 3. Conclusion: Strategic Algorithmic Positioning
-The path to wealth in 2026 is paved with advanced technology and uncompromising security. To thrive, one must align their portfolio with the architectural shifts of the new digital age. The era of passive observation is over; the era of strategic algorithmic positioning has begun. One must seek the absolute terminal of market intelligence to navigate this unprecedented volatility and secure their digital legacy for the coming decades.
-"""
-
-def generate_part(topic, focus):
-    prompt = f"Write a deep 600-word professional analysis on '{topic}'. Focus: {focus}. High-end tone. Use Markdown. English Only."
+# [📊 구글 트렌드 실시간 수집]
+def get_live_trends():
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        resp = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.3}}, timeout=30)
-        res = resp.json()['candidates'][0]['content']['parts'][0]['text']
-        return re.sub(r'\{"role":.*?"content":', '', res, flags=re.DOTALL).replace('"}', '').strip()
-    except: return ""
+        url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US"
+        resp = requests.get(url, timeout=15)
+        titles = re.findall(r"<title>(.*?)</title>", resp.text)
+        # 경제/금융 트렌드 반영을 위해 상위 키워드 활용
+        return titles[3:15] if len(titles) > 5 else ["Dividend Growth", "Compound Interest"]
+    except:
+        return ["Alpha Accumulation", "Quantitative Security"]
+
+# [🖋️ 2호기 전용 1,500자급 초장문 엔진]
+def generate_alpha_report(topic):
+    return f"""
+# [ALPHA INTEL] Quantitative Analysis: The Structural Shift in {topic}
+
+## Executive Summary
+The financial landscape of 2026 is being redefined by the rapid evolution of **{topic}**. For the long-term compounder, understanding the interplay between market volatility and {topic} is critical. This report provides an in-depth quantitative analysis of how {topic} influences asset accumulation and the necessity of robust security protocols during this transition.
+
+## 1. Algorithmic Impact on {topic}
+The data surrounding {topic} suggests a significant increase in algorithmic intervention within the public markets. Our proprietary monitoring nodes have identified a recurring pattern of liquidity hunting specifically tied to {topic} news cycles. This institutional front-running often creates artificial price floors that retail investors mistake for organic support.
+
+To survive the 2026 supercycle, an investor must look beyond the surface volatility of {topic}. The real 'Alpha' lies in the cold, hard data of net-settlement flows. We are witnessing a historic migration of capital away from inflationary assets toward the very nodes of value that {topic} is currently stress-testing.
+
+## 2. Compounding Under Pressure: The Security Dividend
+While {topic} dominates the headlines, the silent threat remains the vulnerability of centralized custodial systems. The true dividend of 2026 is not just financial—it is the security of your principal. As {topic} continues to disrupt traditional valuation models, the risk of a 'systemic freeze' grows.
+
+Our strategic recommendation is to treat security as a primary asset class. The accumulation of wealth through {topic} is meaningless if the access points are controlled by a third party. We observe that sovereign investors are utilizing this period of {topic} volatility to move their core holdings into hardware-secured, non-custodial vaults. This is the only way to ensure that the compounding process remains uninterrupted by the geopolitical realignment currently underway.
+
+## 3. Preservation Strategy: Opting Out of Fragility
+The systemic fragility exposed by {topic} is a feature, not a bug, of the current legacy architecture. By opting out of fractional reserve systems, you effectively insulate your portfolio from the fallout of the {topic} cycle. This requires a fundamental shift in mindset: moving from 'convenience' to 'sovereignty.'
+
+We emphasize that the migration to cold storage is a mandatory tactical requirement. The volatility of {topic} is being used to flush out leveraged participants. Maintaining a delta-neutral position in terms of security is the only path to achieving the 'Alpha Intelligence' necessary for long-term capital integrity.
+
+## Final Strategic Conclusion
+The era of passive accumulation is over. The dynamics of **{topic}** demand an active, security-first approach to compounding. We recommend immediate auditing of your asset custody protocols. Minimize exchange exposure, secure your private keys in physical vaults, and focus on the quantitative signals that truly matter. The reset is accelerating, and only the sovereign will prevail.
+"""
 
 def create_final_html(topic, img_url, body_html, sidebar_html):
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-    <meta name="google-site-verification" content="Jxh9S9J3S5_RBIpJH4CVrDkpRiDZ_mQ99TfIm7xK7YY" />
-    <title>{topic}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{topic} | {BLOG_TITLE}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {{ --bg: #ffffff; --text: #1a1a1a; }}
-        body {{ font-family: 'Inter', sans-serif; line-height: 1.5; color: var(--text); background: var(--bg); margin: 0; }}
-        header {{ padding: 15px 50px; border-bottom: 2px solid #000; background: #fff; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }}
-        .container {{ max-width: 1450px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 60px; padding: 40px 20px; }}
-        @media(min-width: 1100px) {{ .container {{ grid-template-columns: 1fr 400px; }} }}
-        h1 {{ font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; line-height: 1.0; margin-bottom: 20px; letter-spacing: -3px; }}
-        .summary-bar {{ border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin-bottom: 40px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; }}
-        .article-grid {{ display: grid; grid-template-columns: 1fr; gap: 40px; align-items: start; }}
-        @media(min-width: 900px) {{ .article-grid {{ grid-template-columns: 1.35fr 1fr; }} }}
-        .img-wrapper {{ position: sticky; top: 110px; }}
-        .featured-img {{ width: 100%; max-height: 500px; object-fit: cover; border: 1px solid #000; filter: grayscale(100%); }}
-        /* 본문 폰트 밀도 극대화 (1.05rem) */
-        .content {{ font-family: 'Playfair Display', serif; font-size: 1.05rem; text-align: justify; color: #222; }}
-        .content h2 {{ font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.4rem; border-bottom: 6px solid #000; padding-bottom: 5px; margin-top: 35px; text-transform: uppercase; }}
-        .img-promo {{ background: #000; color: #fff; padding: 35px; margin-top: 25px; font-size: 0.95rem; line-height: 1.6; text-align: center; font-weight: 700; border: 3px double #444; }}
-        .sidebar {{ position: sticky; top: 110px; height: fit-content; border-left: 2px solid #000; padding-left: 45px; }}
-        .ad-btn {{ display: block; padding: 20px; margin-bottom: 15px; background: #000; color: #fff; text-align: center; text-decoration: none; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; }}
-        footer {{ background: #000; color: #666; padding: 60px 50px; text-align: center; font-size: 0.75rem; margin-top: 100px; display: flex; justify-content: space-between; }}
+        :root {{ --main-navy: #0a0e14; --accent-gold: #c5a059; }}
+        body {{ font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a1a; line-height: 1.8; margin: 0; }}
+        header {{ background: var(--main-navy); color: #fff; padding: 25px 20px; text-align: center; border-bottom: 5px solid var(--accent-gold); }}
+        .brand {{ font-family: 'Oswald', sans-serif; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; text-shadow: 2px 2px 0px var(--accent-gold); }}
+        .container {{ max-width: 1300px; margin: 30px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
+        @media(max-width: 1000px) {{ .container {{ grid-template-columns: 1fr; }} }}
+        main {{ background: #fff; padding: 45px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }}
+        h1 {{ color: var(--main-navy); font-size: 2.5rem; line-height: 1.2; border-bottom: 2px solid #eee; padding-bottom: 15px; }}
+        .content h2 {{ color: #d90429; font-family: 'Oswald'; margin-top: 40px; border-left: 5px solid var(--accent-gold); padding-left: 15px; }}
+        img {{ width: 100%; height: auto; border-radius: 4px; margin-bottom: 30px; border: 1px solid #ddd; }}
+        .side-card {{ background: #fff; padding: 25px; border-radius: 4px; margin-bottom: 25px; border-top: 5px solid var(--main-navy); box-shadow: 0 3px 10px rgba(0,0,0,0.05); }}
+        .btn {{ display: block; padding: 15px; background: var(--main-navy); color: #fff; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 12px; border-radius: 4px; }}
+        .btn-red {{ background: #d90429; }}
+        footer {{ text-align: center; padding: 60px 20px; color: #999; border-top: 1px solid #eee; background: #fff; font-size: 0.85rem; }}
+        .amazon-disclaimer {{ font-style: italic; margin-top: 10px; opacity: 0.8; }}
     </style></head>
     <body>
-    <header><div style="font-weight:900; font-size:1.4rem;">ALPHA INTELLIGENCE</div><a href="{EMPIRE_URL}" style="color:#000; text-decoration:none; font-weight:900; border:2px solid #000; padding:5px 15px; font-size:0.8rem;">TERMINAL</a></header>
-    <div class="container"><main>
-        <h1>{topic}</h1>
-        <div class="summary-bar">• Institutional Intelligence: Strategic reports for Empire Analyst network.</div>
-        <div class="article-grid">
+    <header><div class="brand">{BLOG_TITLE}</div></header>
+    <div class="container">
+        <main>
+            <div style="color:#d90429; font-weight:bold; margin-bottom:10px;">[ QUANTITATIVE REPORT ]</div>
+            <h1>{topic}</h1>
+            <img src="{img_url}">
             <div class="content">{body_html}</div>
-            <div class="img-wrapper">
-                <img src="{img_url}" class="featured-img">
-                <div class="img-promo">🚀 <b>Strategic Access:</b><br>Maximize market capture with AI-driven hardware security.<br><br><a href="{EMPIRE_URL}" style="color:#fff; text-decoration:underline;">Connect to Private Terminal →</a></div>
+        </main>
+        <aside class="sidebar">
+            <div class="side-card">
+                <a href="{EMPIRE_URL}" class="btn btn-red">🛑 ACCESS ALPHA PLAN</a>
+                <a href="{AFFILIATE_LINK}" class="btn">📉 SHORT MARKET</a>
+                <a href="{AMAZON_LINK}" class="btn">🛡️ SECURE ASSETS</a>
             </div>
-        </div>
-    </main>
-    <aside class="sidebar">
-        <h4 style="margin:0; text-transform:uppercase; color:#999; font-size:0.7rem; letter-spacing:4px; margin-bottom:30px;">Strategic Access</h4>
-        <a href="{EMPIRE_URL}" class="ad-btn">Empire Analyst HQ</a>
-        <a href="{AFFILIATE_LINK}" class="ad-btn" style="background:#fff; color:#000; border:2px solid #000;">Bybit Bonus</a>
-        <a href="{AMAZON_LINK}" class="ad-btn" style="background:#fff; color:#000; border:2px solid #000;">Secure Ledger</a>
-        <ul style="list-style:none; padding:0; font-size:0.95rem; line-height:2.2; font-weight:700; margin-top:50px;">{sidebar_html}</ul>
-    </aside></div>
-    <footer><div>&copy; 2026 ALPHA INTELLIGENCE. Part of Empire Analyst Network.</div><div>Amazon Disclaimer: As an Amazon Associate, I earn from qualifying purchases.</div></footer></body></html>"""
+            <div class="side-card">
+                <h3 style="margin-top:0; color:var(--main-navy); font-family:'Oswald'; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">LATEST ALPHA</h3>
+                <ul style="list-style:none; padding:0; line-height:2.2; font-size:0.9rem;">{sidebar_html}</ul>
+            </div>
+        </aside>
+    </div>
+    <footer>
+        &copy; 2026 {BLOG_TITLE}. Quantitative Accumulation Protocols.
+        <div class="amazon-disclaimer">* As an Amazon Associate, this site earns from qualifying purchases.</div>
+    </footer></body></html>"""
 
 def main():
-    log("🏁 Striker #2 Fixed-Font Robust Version Started")
-    topic = "The Global Decoupling: Autonomous Wealth Systems"
-    # 분량을 위해 3개 파트로 생성
-    p1 = generate_part(topic, "Infrastructure Innovation")
-    p2 = generate_part(topic, "Economic Impact")
-    p3 = generate_part(topic, "Strategic Security")
-    full_content = f"{p1}\n\n{p2}\n\n{p3}"
-    if len(full_content) < 1400: full_content = FALLBACK_REPORT
-    
-    html_body = markdown.markdown(full_content)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('minimal hardware tech black and white studio lighting 8k')}"
+    trends = get_live_trends()
+    topic = random.choice(trends)
+    body_text = generate_alpha_report(topic) 
+    html_body = markdown.markdown(body_text)
+    # 이미지 스타일: 전문적인 데이터 분석 느낌
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional quantitative trading floor data visualization 8k')}?width=1200&height=600"
     
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
-    sidebar_html = "".join([f"<li>• <a href='{BLOG_BASE_URL}{h.get('file','')}' style='text-decoration:none; color:#000;'>{h.get('title','Recent Intel')}</a></li>" for h in history[:6]])
     
+    sidebar_html = "".join([f"<li><b style='color:var(--accent-gold);'>▶</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#333; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
     archive_name = f"post_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
     history.insert(0, {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_name})
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
     
     full_html = create_final_html(topic, img_url, html_body, sidebar_html)
-    with open(os.path.join(BASE_DIR, "index.html"), "w", encoding="utf-8") as f: f.write(full_html)
-    with open(os.path.join(BASE_DIR, archive_name), "w", encoding="utf-8") as f: f.write(full_html)
-    generate_sitemap(history)
-    log(f"✅ Mission Complete: {len(full_content)} characters published.")
+    with open("index.html", "w", encoding="utf-8") as f: f.write(full_html)
+    with open(archive_name, "w", encoding="utf-8") as f: f.write(full_html)
+    log(f"✅ 2호기 Alpha Update Complete: {topic}")
 
 if __name__ == "__main__": main()
