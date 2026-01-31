@@ -1,14 +1,14 @@
 import os, json, random, requests, markdown, urllib.parse, time, re, sys, io
 from datetime import datetime
 
-# [SYSTEM] 한글 및 특수문자 깨짐 방지
+# [SYSTEM] 한글 깨짐 방지
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def log(msg): print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
-# [Configuration] ★2호기 설정★
+# [Configuration] ★2호기 전용 설정★
 BLOG_TITLE = "Alpha Intelligence" 
 BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/" 
 EMPIRE_URL = "https://empire-analyst.digital/"
@@ -22,10 +22,9 @@ def get_live_trends():
         url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US"
         resp = requests.get(url, timeout=15)
         titles = re.findall(r"<title>(.*?)</title>", resp.text)
-        # 경제/금융 트렌드 반영을 위해 상위 키워드 활용
-        return titles[3:15] if len(titles) > 5 else ["Dividend Growth", "Compound Interest"]
+        return titles[3:15] if len(titles) > 5 else ["Dividend Alpha", "Compounding Strategy"]
     except:
-        return ["Alpha Accumulation", "Quantitative Security"]
+        return ["Asset Accumulation", "Quantitative Security"]
 
 # [🖋️ 2호기 전용 1,500자급 초장문 엔진]
 def generate_alpha_report(topic):
@@ -38,7 +37,7 @@ The financial landscape of 2026 is being redefined by the rapid evolution of **{
 ## 1. Algorithmic Impact on {topic}
 The data surrounding {topic} suggests a significant increase in algorithmic intervention within the public markets. Our proprietary monitoring nodes have identified a recurring pattern of liquidity hunting specifically tied to {topic} news cycles. This institutional front-running often creates artificial price floors that retail investors mistake for organic support.
 
-To survive the 2026 supercycle, an investor must look beyond the surface volatility of {topic}. The real 'Alpha' lies in the cold, hard data of net-settlement flows. We are witnessing a historic migration of capital away from inflationary assets toward the very nodes of value that {topic} is currently stress-testing.
+To survive the 2026 supercycle, an investor must look beyond the surface volatility of {topic}. The real 'Alpha' lies in the cold, hard data of net-settlement flows. We are witnessing a historic migration of capital away from inflationary assets toward the very nodes of value that {topic} is currently stress-tested.
 
 ## 2. Compounding Under Pressure: The Security Dividend
 While {topic} dominates the headlines, the silent threat remains the vulnerability of centralized custodial systems. The true dividend of 2026 is not just financial—it is the security of your principal. As {topic} continues to disrupt traditional valuation models, the risk of a 'systemic freeze' grows.
@@ -55,32 +54,39 @@ The era of passive accumulation is over. The dynamics of **{topic}** demand an a
 """
 
 def create_final_html(topic, img_url, body_html, sidebar_html):
+    # [2호기 테마] 실버 & 다크 블루 (차갑고 세련된 느낌)
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{topic} | {BLOG_TITLE}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {{ --main-navy: #0a0e14; --accent-gold: #c5a059; }}
-        body {{ font-family: 'Inter', sans-serif; background: #f8f9fa; color: #1a1a1a; line-height: 1.8; margin: 0; }}
-        header {{ background: var(--main-navy); color: #fff; padding: 25px 20px; text-align: center; border-bottom: 5px solid var(--accent-gold); }}
-        .brand {{ font-family: 'Oswald', sans-serif; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; text-shadow: 2px 2px 0px var(--accent-gold); }}
-        .container {{ max-width: 1300px; margin: 30px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
+        :root {{ --alpha-navy: #101820; --alpha-silver: #adb5bd; --alpha-blue: #0047ab; }}
+        body {{ font-family: 'Inter', sans-serif; background: #e9ecef; color: #212529; line-height: 1.8; margin: 0; }}
+        
+        header {{ background: var(--alpha-navy); color: #fff; padding: 30px 20px; text-align: center; border-bottom: 5px solid var(--alpha-silver); position: relative; }}
+        .brand {{ font-family: 'Montserrat', sans-serif; font-size: 1.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--alpha-silver); }}
+        
+        .container {{ max-width: 1300px; margin: 40px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
         @media(max-width: 1000px) {{ .container {{ grid-template-columns: 1fr; }} }}
-        main {{ background: #fff; padding: 45px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }}
-        h1 {{ color: var(--main-navy); font-size: 2.5rem; line-height: 1.2; border-bottom: 2px solid #eee; padding-bottom: 15px; }}
-        .content h2 {{ color: #d90429; font-family: 'Oswald'; margin-top: 40px; border-left: 5px solid var(--accent-gold); padding-left: 15px; }}
-        img {{ width: 100%; height: auto; border-radius: 4px; margin-bottom: 30px; border: 1px solid #ddd; }}
-        .side-card {{ background: #fff; padding: 25px; border-radius: 4px; margin-bottom: 25px; border-top: 5px solid var(--main-navy); box-shadow: 0 3px 10px rgba(0,0,0,0.05); }}
-        .btn {{ display: block; padding: 15px; background: var(--main-navy); color: #fff; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 12px; border-radius: 4px; }}
-        .btn-red {{ background: #d90429; }}
-        footer {{ text-align: center; padding: 60px 20px; color: #999; border-top: 1px solid #eee; background: #fff; font-size: 0.85rem; }}
+        
+        main {{ background: #fff; padding: 45px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }}
+        h1 {{ color: var(--alpha-navy); font-size: 2.8rem; line-height: 1.2; margin-top: 0; }}
+        .content h2 {{ color: var(--alpha-blue); border-bottom: 2px solid var(--alpha-silver); padding-bottom: 10px; margin-top: 50px; font-family: 'Montserrat'; }}
+        img {{ width: 100%; height: auto; border-radius: 6px; margin-bottom: 30px; border: 1px solid #dee2e6; }}
+        
+        .side-card {{ background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 6px solid var(--alpha-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }}
+        .btn {{ display: block; padding: 15px; background: var(--alpha-navy); color: #fff; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 12px; border-radius: 4px; transition: 0.2s; }}
+        .btn-red {{ background: #c8102e; }}
+        .btn:hover {{ background: var(--alpha-blue); }}
+        
+        footer {{ text-align: center; padding: 60px 20px; color: #6c757d; border-top: 1px solid #dee2e6; background: #f8f9fa; font-size: 0.85rem; }}
         .amazon-disclaimer {{ font-style: italic; margin-top: 10px; opacity: 0.8; }}
     </style></head>
     <body>
-    <header><div class="brand">{BLOG_TITLE}</div></header>
+    <header><div class="brand">ALPHA_INTELLIGENCE</div></header>
     <div class="container">
         <main>
-            <div style="color:#d90429; font-weight:bold; margin-bottom:10px;">[ QUANTITATIVE REPORT ]</div>
+            <div style="color:var(--alpha-blue); font-weight:bold; margin-bottom:10px; letter-spacing:1px;">[ QUANTITATIVE ANALYSIS ]</div>
             <h1>{topic}</h1>
             <img src="{img_url}">
             <div class="content">{body_html}</div>
@@ -92,7 +98,7 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
                 <a href="{AMAZON_LINK}" class="btn">🛡️ SECURE ASSETS</a>
             </div>
             <div class="side-card">
-                <h3 style="margin-top:0; color:var(--main-navy); font-family:'Oswald'; border-bottom:2px solid var(--accent-gold); padding-bottom:5px;">LATEST ALPHA</h3>
+                <h3 style="margin-top:0; color:var(--alpha-navy); font-family:'Montserrat';">RECENT ALPHA</h3>
                 <ul style="list-style:none; padding:0; line-height:2.2; font-size:0.9rem;">{sidebar_html}</ul>
             </div>
         </aside>
@@ -107,14 +113,13 @@ def main():
     topic = random.choice(trends)
     body_text = generate_alpha_report(topic) 
     html_body = markdown.markdown(body_text)
-    # 이미지 스타일: 전문적인 데이터 분석 느낌
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional quantitative trading floor data visualization 8k')}?width=1200&height=600"
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional clean financial workspace silver blue accent 8k')}?width=1200&height=600"
     
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
     
-    sidebar_html = "".join([f"<li><b style='color:var(--accent-gold);'>▶</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#333; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
+    sidebar_html = "".join([f"<li><b style='color:var(--alpha-blue);'>▶</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#333; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
     archive_name = f"post_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
     history.insert(0, {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_name})
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
@@ -122,6 +127,5 @@ def main():
     full_html = create_final_html(topic, img_url, html_body, sidebar_html)
     with open("index.html", "w", encoding="utf-8") as f: f.write(full_html)
     with open(archive_name, "w", encoding="utf-8") as f: f.write(full_html)
-    log(f"✅ 2호기 Alpha Update Complete: {topic}")
 
 if __name__ == "__main__": main()
