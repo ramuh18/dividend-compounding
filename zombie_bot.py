@@ -7,8 +7,8 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # [Configuration]
-BLOG_TITLE = "Alpha Intelligence" 
-BLOG_BASE_URL = "https://ramuh18.github.io/dividend-compounding/" 
+BLOG_TITLE = "Neural Algorithm" 
+BLOG_BASE_URL = "https://ramuh18.github.io/neural-algorithm/" 
 EMPIRE_URL = "https://empire-analyst.digital/"
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
@@ -19,35 +19,30 @@ def get_live_trends():
         url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US"
         resp = requests.get(url, timeout=15)
         titles = re.findall(r"<title>(.*?)</title>", resp.text)
-        return titles[3:15] if len(titles) > 5 else ["Dividend Growth", "Compound Interest"]
+        return titles[3:15] if len(titles) > 5 else ["Cyber Security", "AI Singularity"]
     except:
-        return ["Alpha Accumulation", "Quantitative Security"]
+        return ["Network Fragility", "Encryption War"]
 
-# [🖋️ 1,500자급 초장문 엔진 복구]
-def generate_alpha_report(topic):
+# [🖋️ 1,500자급 초장문 해킹/보안 엔진]
+def generate_neural_report(topic):
     return f"""
-# [ALPHA INTEL] Quantitative Analysis: The Structural Shift in {topic}
+# [DEEP_NET_INTEL] System Vulnerability Analysis: {topic} Protocols
 
-## Executive Summary: The Era of Volatile Accumulation
-The financial landscape of 2026 is being radically redefined by the rapid evolution and market penetration of **{topic}**. For the long-term compounder and dividend seeker, understanding the hidden interplay between surface market volatility and the underlying structural trends of {topic} is no longer just an advantage—it is a critical requirement for survival. This report provides an exhaustive, data-driven deep dive into how {topic} is influencing global asset accumulation and why robust security protocols are mandatory during this transition.
+## 01. Initial Scan: The {topic} Vector
+The current deployment of **{topic}** across global networks has triggered a series of critical security alerts. As of 2026, the intersection between decentralized data nodes and {topic} is creating a surface area for systemic exploits that legacy firewalls are incapable of mitigating. This report decrypts the underlying structural weaknesses within {topic} and the mandatory encryption protocols required to maintain capital sovereignty.
 
-## 1. Algorithmic Dominance & The {topic} Factor
-Recent data surrounding {topic} suggests a massive, 200% increase in algorithmic intervention within public markets over the last fiscal quarter. Our proprietary monitoring nodes have successfully identified a recurring pattern of 'liquidity hunting' specifically tied to {topic} news cycles. These institutional front-running tactics often create artificial price floors that retail investors mistakenly identify as organic support.
+## 02. Payload Analysis: The Weaponization of {topic}
+Our monitoring nodes have detected a significant shift in how {topic} is being integrated into autonomous trading algorithms. There is a clear pattern of 'backdoor' entry points being established under the guise of {topic} optimization. Institutional actors are leveraging {topic} to stress-test the liquidity of private vaults, looking for any centralized point of failure.
 
-To achieve true Alpha in the 2026 supercycle, an investor must look far beyond the noisy surface volatility of {topic}. The real value lies in analyzing net-settlement flows and identifying where institutional 'smart money' is actually parking capital. We are currently witnessing a historic migration of capital away from inflationary, legacy assets toward the very nodes of value that {topic} is presently stress-testing in real-time.
+If your assets are parked in a centralized exchange during a {topic} volatility spike, you are effectively operating within a 'honeypot' environment. The data suggests that {topic} is being used as a catalyst for a massive, coordinated redistribution of wealth from unsecured nodes to hardened, private clusters.
 
-## 2. Compounding Under Systemic Pressure: The Security Dividend
-While {topic} continues to dominate the global headlines, the silent, more dangerous threat remains the inherent vulnerability of centralized custodial systems. The true 'dividend' of the 2026 era is not just financial gain—it is the absolute security of your principal. As {topic} disrupts traditional valuation models, the risk of a 'systemic freeze' or digital lockout grows exponentially each day.
+## 03. Countermeasures: Hardware-Level Sovereignty
+The only effective countermeasure against the systemic fragility exposed by {topic} is to opt-out of the digital grid entirely. The 'Always-On' nature of modern custodial systems is the primary exploit vector for {topic}. True network sovereignty requires a transition to air-gapped, physical vaulting systems.
 
-Our strategic recommendation is to treat digital and physical security as a primary asset class in itself. The accumulation of wealth through {topic} trends is rendered meaningless if the access points to that wealth are controlled by a third party with their own agenda. We observe that the most successful sovereign investors are utilizing this period of {topic} volatility to move their core holdings into hardware-secured, non-custodial vaults. This is the only proven method to ensure that the compounding process remains uninterrupted by the geopolitical realignment currently underway.
+By moving your private keys to a hardware-secured node, you effectively nullify the {topic} exploit. This is not an ideological choice; it is a tactical necessity in an era where {topic} defines the parameters of financial survival. The migration to cold storage is the ultimate 'Kill-Switch' against the centralized overreach being tested by the {topic} initiative.
 
-## 3. Tactical Preservation: Opting Out of Fractional Fragility
-The systemic fragility exposed by the rise of {topic} is not a bug; it is a fundamental feature of the current legacy financial architecture. By opting out of fractional reserve systems, you effectively insulate your entire portfolio from the inevitable fallout of the {topic} volatility cycle. This requires a fundamental, psychological shift in mindset: prioritizing sovereignty and control over mere convenience and speed.
-
-We must emphasize that the migration to cold storage is not an optional suggestion—it is a mandatory tactical requirement for 2026. The current volatility of {topic} is being strategically used by institutional players to flush out leveraged participants and retail holders. Maintaining a neutral position in terms of security is the only viable path to achieving the 'Alpha Intelligence' necessary for long-term capital integrity and generational wealth.
-
-## Strategic Conclusion: The Time for Sovereign Execution
-The era of passive, 'set-it-and-forget-it' accumulation has officially ended. The complex dynamics of **{topic}** demand an active, security-first approach to all compounding strategies. We recommend an immediate, comprehensive audit of your asset custody protocols. Minimize your exposure to centralized exchange platforms, secure your private keys in physical, non-digital vaults, and focus exclusively on the quantitative signals that truly drive value. The reset is accelerating, and only the sovereign will prevail.
+## 04. Strategic Override: Executing the Exit
+The supercycle is accelerating. The volatility surrounding **{topic}** is the final warning signal before a major network-wide reset. We recommend an immediate system audit: disconnect all legacy financial hooks, accumulate sovereign assets during the {topic} noise, and secure your access points in physical, non-digital environments. The era of the centralized observer is over. The era of the sovereign operator has begun.
 """
 
 def generate_seo_files(history):
@@ -63,66 +58,64 @@ def generate_seo_files(history):
 def create_final_html(topic, img_url, body_html, sidebar_html):
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="여기에_2호기_인증태그_입력" />
+    <meta name="google-site-verification" content="여기에_3호기_인증태그_입력" />
     <title>{topic} | {BLOG_TITLE}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {{ --alpha-navy: #101820; --alpha-silver: #adb5bd; --alpha-blue: #0047ab; }}
-        body {{ font-family: 'Inter', sans-serif; background: #e9ecef; color: #212529; line-height: 1.8; margin: 0; }}
-        header {{ background: var(--alpha-navy); color: #fff; padding: 30px 20px; text-align: center; border-bottom: 5px solid var(--alpha-silver); }}
-        .brand {{ font-family: 'Montserrat', sans-serif; font-size: 1.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--alpha-silver); }}
-        .container {{ max-width: 1300px; margin: 40px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
+        :root {{ --neon-green: #39ff14; --dark-bg: #0a0a0a; --terminal-text: #00ff41; }}
+        body {{ font-family: 'Fira Code', monospace; background: var(--dark-bg); color: var(--terminal-text); line-height: 1.6; margin: 0; }}
+        header {{ border-bottom: 2px solid var(--neon-green); padding: 20px; text-align: center; background: #000; }}
+        .brand {{ font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-green); }}
+        .container {{ max-width: 1300px; margin: 30px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
         @media(max-width: 1000px) {{ .container {{ grid-template-columns: 1fr; }} }}
-        main {{ background: #fff; padding: 45px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }}
-        h1 {{ color: var(--alpha-navy); font-size: 2.5rem; line-height: 1.2; margin-top: 0; }}
-        .content h2 {{ color: var(--alpha-blue); border-bottom: 2px solid var(--alpha-silver); padding-bottom: 10px; margin-top: 50px; font-family: 'Montserrat'; }}
-        img {{ width: 100%; height: auto; border-radius: 6px; margin-bottom: 30px; border: 1px solid #dee2e6; }}
-        .side-card {{ background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 6px solid var(--alpha-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }}
-        .btn {{ display: block; padding: 15px; background: var(--alpha-navy); color: #fff; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 12px; border-radius: 4px; transition: 0.2s; }}
-        footer {{ text-align: center; padding: 60px 20px; color: #6c757d; border-top: 1px solid #dee2e6; background: #f8f9fa; font-size: 0.85rem; }}
-        .footer-links {{ margin-bottom: 20px; }}
-        .footer-links a {{ color: #444; text-decoration: none; margin: 0 15px; cursor: pointer; font-weight: bold; }}
-        .amazon-disclaimer {{ font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic; line-height: 1.4; }}
-        .modal {{ display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }}
-        .modal-content {{ background: #fff; margin: 10% auto; padding: 30px; width: 80%; max-width: 600px; border-radius: 8px; color: #333; text-align: left; }}
-        .close {{ color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }}
+        main {{ background: #000; padding: 40px; border: 1px solid var(--neon-green); box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); }}
+        h1 {{ color: #fff; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px; }}
+        .content h2 {{ color: var(--neon-green); margin-top: 40px; text-transform: uppercase; }}
+        img {{ width: 100%; height: auto; border: 1px solid var(--neon-green); margin-bottom: 30px; filter: grayscale(50%) brightness(80%); }}
+        .side-card {{ background: #000; padding: 20px; border: 1px solid var(--neon-green); margin-bottom: 20px; }}
+        .btn {{ display: block; padding: 15px; background: var(--neon-green); color: #000; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 10px; }}
+        footer {{ text-align: center; padding: 50px; font-size: 0.8rem; border-top: 1px solid var(--neon-green); margin-top: 50px; opacity: 0.7; }}
+        .footer-links {{ margin-bottom: 15px; }}
+        .footer-links a {{ color: var(--neon-green); text-decoration: none; margin: 0 10px; cursor: pointer; }}
+        .amazon-disclaimer {{ font-size: 0.7rem; margin-top: 15px; font-style: italic; }}
+        .modal {{ display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }}
+        .modal-content {{ background: #000; margin: 15% auto; padding: 30px; width: 70%; max-width: 500px; border: 1px solid var(--neon-green); color: var(--neon-green); }}
+        .close {{ color: #fff; float: right; font-size: 24px; cursor: pointer; }}
     </style></head>
     <body>
-    <header><div class="brand">ALPHA_INTELLIGENCE</div></header>
+    <header><div class="brand">NEURAL_ALGORITHM_VAULT v2.6</div></header>
     <div class="container">
         <main>
-            <div style="color:var(--alpha-blue); font-weight:bold; margin-bottom:10px;">[ QUANTITATIVE REPORT ]</div>
+            <div style="font-size:0.8rem; margin-bottom:10px;">> DECRYPTING_TOPIC... [OK]</div>
             <h1>{topic}</h1><img src="{img_url}"><div class="content">{body_html}</div>
         </main>
         <aside class="sidebar">
             <div class="side-card">
-                <a href="{EMPIRE_URL}" class="btn" style="background:#c8102e;">🛑 ACCESS ALPHA PLAN</a>
-                <a href="{AFFILIATE_LINK}" class="btn">📉 SHORT MARKET</a>
-                <a href="{AMAZON_LINK}" class="btn">🛡️ SECURE ASSETS</a>
+                <a href="{EMPIRE_URL}" class="btn" style="background:#ff0000; color:#fff;">🛑 EXECUTE_EXIT_PLAN</a>
+                <a href="{AFFILIATE_LINK}" class="btn">📉 SHORT_MARKET</a>
+                <a href="{AMAZON_LINK}" class="btn">🛡️ SECURE_ASSETS</a>
             </div>
             <div class="side-card">
-                <h3 style="color:var(--alpha-navy); font-family:'Montserrat';">LATEST ALPHA</h3>
-                <ul style="list-style:none; padding:0; font-size:0.9rem;">{sidebar_html}</ul>
+                <h3 style="font-size:1rem;">> RECENT_SIGNALS</h3>
+                <ul style="list-style:none; padding:0; font-size:0.8rem;">{sidebar_html}</ul>
             </div>
         </aside>
     </div>
     <footer>
         <div class="footer-links">
-            <a onclick="openModal('about')">About Us</a>
-            <a onclick="openModal('privacy')">Privacy Policy</a>
-            <a onclick="openModal('contact')">Contact</a>
+            <a onclick="openModal('about')">[ABOUT_US]</a>
+            <a onclick="openModal('privacy')">[PRIVACY_POLICY]</a>
+            <a onclick="openModal('contact')">[CONTACT]</a>
         </div>
-        &copy; 2026 {BLOG_TITLE}. Quantitative Accumulation Protocols.
-        <div class="amazon-disclaimer">
-            * As an Amazon Associate, this site earns from qualifying purchases. This supports our independent market research.
-        </div>
+        &copy; 2026 {BLOG_TITLE}. NOISE_REDUCTION_PROTOCOLS_ACTIVE.
+        <div class="amazon-disclaimer">* AS AN AMAZON ASSOCIATE, THIS NODE EARNS FROM QUALIFYING PURCHASES.</div>
     </footer>
     <div id="infoModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal()">&times;</span><div id="modalBody"></div></div></div>
     <script>
         const info = {{
-            about: "<h2>About {BLOG_TITLE}</h2><p>Alpha Intelligence focuses on quantitative strategies for capital growth and compounding. We analyze systemic risks to ensure portfolio integrity.</p>",
-            privacy: "<h2>Privacy Policy</h2><p>We do not collect personal data. Cookies are used for analytics only. Your privacy is paramount in our sovereign network.</p>",
-            contact: "<h2>Contact</h2><p>For data inquiries: <b>intel@alpha-intelligence.net</b></p>"
+            about: "<h2>[ABOUT_NODE]</h2><p>Neural Algorithm is a decentralized intelligence hub monitoring global systemic risks and data sovereignty.</p>",
+            privacy: "<h2>[DATA_POLICY]</h2><p>Zero-knowledge tracking policy. Cookies are used for operational telemetry only.</p>",
+            contact: "<h2>[COMMS_CHANNEL]</h2><p>Secure link: <b>ops@neural-algorithm.io</b></p>"
         }};
         function openModal(id) {{ document.getElementById('modalBody').innerHTML = info[id]; document.getElementById('infoModal').style.display = "block"; }}
         function closeModal() {{ document.getElementById('infoModal').style.display = "none"; }}
@@ -132,13 +125,13 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
 def main():
     trends = get_live_trends()
     topic = random.choice(trends)
-    body_text = generate_alpha_report(topic) 
+    body_text = generate_neural_report(topic) 
     html_body = markdown.markdown(body_text)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('professional clean financial workspace silver blue accent 8k')}?width=1200&height=600"
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('cyberpunk matrix green digital code hacker dark 8k')}?width=1200&height=600"
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
-    sidebar_html = "".join([f"<li><b style='color:var(--alpha-blue);'>▶</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#333; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
+    sidebar_html = "".join([f"<li><b style='color:var(--neon-green);'>#</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#00ff41; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
     archive_name = f"post_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
     history.insert(0, {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_name})
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
