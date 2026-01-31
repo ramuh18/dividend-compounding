@@ -1,4 +1,4 @@
-import os, json, random, requests, markdown, urllib.parse, time, re, sys, io
+import os, json, random, requests, markdown, urllib.parse, time, re, sys, io, textwrap
 from datetime import datetime
 
 # [SYSTEM] 환경 설정
@@ -6,44 +6,139 @@ sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# [Configuration]
-BLOG_TITLE = "Neural Algorithm" 
-BLOG_BASE_URL = "https://ramuh18.github.io/neural-algorithm/" 
+# [Configuration] 2호기 전용 설정
+BLOG_TITLE = "Alpha Intelligence" 
+BLOG_BASE_URL = "https://ramuh18.github.io/alpha-intelligence/" 
 EMPIRE_URL = "https://empire-analyst.digital/"
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 AFFILIATE_LINK = "https://www.bybit.com/invite?ref=DOVWK5A" 
 AMAZON_LINK = "https://www.amazon.com/s?k=ledger+nano+x&tag=empireanalyst-20"
 
+# [주제 리스트 50개: 2호기 테마(보안/퀀트/자산관리)에 맞춤]
+BACKUP_TOPICS = [
+    "Quantum Computing Risks in Finance", "Algorithmic Trading Strategies", "Zero-Knowledge Proofs Explained",
+    "Cold Storage Security Protocols", "High-Frequency Trading Impact", "Dividend Aristocrats Analysis",
+    "Cybersecurity in Fintech", "Decentralized Finance (DeFi) Audits", "Smart Contract Vulnerabilities",
+    "Automated Portfolio Rebalancing", "Machine Learning in Markets", "Predictive Analytics Models",
+    "Asset Tokenization Trends", "Regulatory Compliance in Crypto", "Institutional Custody Solutions",
+    "Multi-Signature Wallet Security", "The Future of Robo-Advisors", "Big Data in Wealth Management",
+    "Sentiment Analysis Algorithms", "Blockchain Interoperability", "Privacy-Preserving Coins",
+    "Identity Management on Blockchain", "Risk-Adjusted Return Metrics", "Sharpe Ratio Explained",
+    "Technical Analysis vs Fundamental", "Moving Average Crossover Strategies", "Bollinger Bands Analysis",
+    "RSI Divergence Signals", "Market Neutral Strategies", "Arbitrage Opportunities 2026",
+    "Stablecoin Peg Stability", "Centralized Exchange Risks", "Peer-to-Peer Lending Data",
+    "Real Estate Crowdfunding Analysis", "Biometric Security in Banking", "Phishing Attack Prevention",
+    "Ransomware Threats to Finance", "Cloud Security for Assets", "API Security Standards",
+    "Data Encryption Best Practices", "Two-Factor Authentication Flaws", "Hardware Wallet Comparison",
+    "Paper Wallet Pros and Cons", "Seed Phrase Storage Guide", "Estate Planning for Digital Assets",
+    "Tax Loss Harvesting Algorithms", "ESG Investing Data Analysis", "Carbon Credit Markets",
+    "The Alpha Generation Strategy", "Beta Slippage Risks"
+]
+
+# [문단 블록 15개: 2호기 테마(데이터/보안)에 맞춘 내용]
+CONTENT_BLOCKS = [
+    """
+    ## The Data-Driven Advantage
+    In the modern financial landscape, **{topic}** is not just a buzzword; it is a mathematical necessity. Alpha Intelligence algorithms indicate that investors ignoring {topic} are operating with a significant information asymmetry. By leveraging high-frequency data sets related to {topic}, institutional players are capturing alpha while retail traders are left chasing noise.
+    """,
+    """
+    ## Security Protocols and {topic}
+    The vulnerability surface regarding **{topic}** is expanding rapidly. Our forensic analysis of recent market breaches shows that {topic} is often the primary attack vector. Implementing military-grade encryption and multi-layered security protocols is the only viable defense against the threats associated with {topic}. Security is not a product; it is a process.
+    """,
+    """
+    ## Quantifying the Risk
+    Standard risk models often fail to account for the tail risks embedded in **{topic}**. When we apply Monte Carlo simulations to {topic}, the probability of a systemic failure increases exponentially under stress conditions. Understanding the statistical variance of {topic} allows for more robust portfolio construction and capital preservation.
+    """,
+    """
+    ## The Algorithmic Shift
+    The market is no longer driven by human sentiment alone; it is driven by algorithms reacting to **{topic}**. Machine learning models are now trained to execute trades based on micro-patterns in {topic} faster than human reaction time. To survive in this environment, one must understand the code behind the trade.
+    """,
+    """
+    ## Asset Sovereignity Strategy
+    **{topic}** highlights the critical need for asset sovereignty. If you rely on third-party custodians to manage the risks of {topic}, you are exposing yourself to counterparty risk.
+    <div style="margin: 20px 0; padding: 15px; background: #f0fdf4; border-left: 5px solid #059669;">
+        <strong>🛡️ Security Alert:</strong> Take control of your keys. 
+        <a href="{AMAZON_LINK}" style="color: #059669; font-weight: bold;">[Recommended Hardware Wallets]</a>
+    </div>
+    """,
+    """
+    ## Decentralization vs Centralization
+    The debate around **{topic}** centers on the friction between centralized control and decentralized efficiency. While centralized systems offer speed, they introduce single points of failure regarding {topic}. Decentralized alternatives, verified by cryptographic proofs, offer a more resilient framework for managing {topic} in the long term.
+    """,
+    """
+    ## The Future of {topic}
+    Predictive modeling suggests that **{topic}** will undergo a paradigm shift by 2027. Early adopters who integrate robust data analytics with {topic} will likely see outsized returns. The convergence of AI and {topic} is creating new asset classes that simply did not exist a decade ago.
+    """,
+    """
+    ## Audit and Compliance
+    Regulatory frameworks are tightening around **{topic}**. For sophisticated investors, ensuring that their exposure to {topic} is compliant with global standards is paramount. A lack of transparency in {topic} metrics is a major red flag. Always demand auditable on-chain data or third-party verification.
+    """,
+    """
+    ## Technical Analysis Indicators
+    On the charts, **{topic}** is forming a classic accumulation pattern. Volatility indices suggest that a breakout regarding {topic} is imminent. Quantitative traders are currently positioning themselves on the long side of volatility, expecting {topic} to drive significant price action in the coming quarters.
+    """,
+    """
+    ## The Privacy Paradox
+    In an era of surveillance, **{topic}** offers a unique value proposition for privacy preservation. However, the balance between transparency and anonymity in {topic} remains delicate. Advanced cryptographic techniques like Zero-Knowledge Proofs are becoming essential for interacting with {topic} without revealing sensitive financial data.
+    """,
+    """
+    ## Smart Contract Logic
+    If **{topic}** involves automated execution, one must scrutinize the underlying smart contract logic. Code is law, but code can contain bugs. Understanding the solidity of the code backing {topic} is more important than reading the whitepaper. We recommend a thorough audit of any protocol related to {topic}.
+    """,
+    """
+    ## Yield Generation Mechanics
+    How is yield generated from **{topic}**? If the source of the yield is opaque, it is likely a Ponzi structure. Sustainable alpha in {topic} comes from genuine economic activity or liquidity provision, not inflationary tokenomics. We dissect the yield mechanics of {topic} to separate the signal from the noise.
+    """,
+    """
+    ## The Institutional Grade Standard
+    **{topic}** is rapidly moving from an experimental niche to an institutional grade asset class. Custodians like Fidelity and BNY Mellon are building infrastructure to support {topic}. This institutional adoption brings liquidity but also regulatory scrutiny. The wild west days of {topic} are over.
+    """,
+    """
+    ## Defensive Portfolio Allocation
+    In a defensive portfolio, **{topic}** plays a specific role: uncorrelated return generation. By adding exposure to {topic}, investors can improve the Sharpe ratio of their overall holdings. However, position sizing is key. We recommend capping exposure to {topic} at 5% of the total portfolio value.
+    """,
+    """
+    ## The Human Factor in Automation
+    Even in fully automated systems involving **{topic}**, the human element remains the weakest link. Phishing, social engineering, and poor operational security are the biggest threats to your positions in {topic}. Automation handles the math, but discipline handles the security.
+    """
+]
+
 def get_live_trends():
-    try:
-        url = "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US"
-        resp = requests.get(url, timeout=15)
-        titles = re.findall(r"<title>(.*?)</title>", resp.text)
-        return titles[3:15] if len(titles) > 5 else ["Cyber Security", "AI Singularity"]
-    except:
-        return ["Network Fragility", "Encryption War"]
+    selected_topic = random.choice(BACKUP_TOPICS)
+    return [selected_topic]
 
-# [🖋️ 1,500자급 초장문 해킹/보안 엔진]
-def generate_neural_report(topic):
-    return f"""
-# [DEEP_NET_INTEL] System Vulnerability Analysis: {topic} Protocols
+def generate_deep_report(topic):
+    # 인트로
+    intro = f"""
+# Alpha Report: {topic}
 
-## 01. Initial Scan: The {topic} Vector
-The current deployment of **{topic}** across global networks has triggered a series of critical security alerts. As of 2026, the intersection between decentralized data nodes and {topic} is creating a surface area for systemic exploits that legacy firewalls are incapable of mitigating. This report decrypts the underlying structural weaknesses within {topic} and the mandatory encryption protocols required to maintain capital sovereignty.
-
-## 02. Payload Analysis: The Weaponization of {topic}
-Our monitoring nodes have detected a significant shift in how {topic} is being integrated into autonomous trading algorithms. There is a clear pattern of 'backdoor' entry points being established under the guise of {topic} optimization. Institutional actors are leveraging {topic} to stress-test the liquidity of private vaults, looking for any centralized point of failure.
-
-If your assets are parked in a centralized exchange during a {topic} volatility spike, you are effectively operating within a 'honeypot' environment. The data suggests that {topic} is being used as a catalyst for a massive, coordinated redistribution of wealth from unsecured nodes to hardened, private clusters.
-
-## 03. Countermeasures: Hardware-Level Sovereignty
-The only effective countermeasure against the systemic fragility exposed by {topic} is to opt-out of the digital grid entirely. The 'Always-On' nature of modern custodial systems is the primary exploit vector for {topic}. True network sovereignty requires a transition to air-gapped, physical vaulting systems.
-
-By moving your private keys to a hardware-secured node, you effectively nullify the {topic} exploit. This is not an ideological choice; it is a tactical necessity in an era where {topic} defines the parameters of financial survival. The migration to cold storage is the ultimate 'Kill-Switch' against the centralized overreach being tested by the {topic} initiative.
-
-## 04. Strategic Override: Executing the Exit
-The supercycle is accelerating. The volatility surrounding **{topic}** is the final warning signal before a major network-wide reset. We recommend an immediate system audit: disconnect all legacy financial hooks, accumulate sovereign assets during the {topic} noise, and secure your access points in physical, non-digital environments. The era of the centralized observer is over. The era of the sovereign operator has begun.
+## Intelligence Briefing
+Our algorithmic indicators have flagged significant activity regarding **{topic}**. In a market driven by data, understanding the underlying metrics of {topic} provides a distinct edge. This report analyzes the technical and fundamental vectors of {topic}.
 """
+    
+    # [핵심] textwrap.dedent로 '##' 문제 해결 + 7개 블록 조립
+    selected_blocks = random.sample(CONTENT_BLOCKS, 7)
+    body_content = ""
+    for block in selected_blocks:
+        clean_block = textwrap.dedent(block)
+        body_content += clean_block.format(topic=topic, AMAZON_LINK=AMAZON_LINK) + "\n"
+
+    # 결론
+    conclusion = f"""
+## Strategic Outlook
+The data suggests a high probability of volatility in **{topic}**. Adaptive strategies are required to navigate this shift.
+<br><br>
+**Optimize your portfolio security.**
+<div style="background: #fff; padding: 20px; border: 1px solid #ddd; margin-top: 20px; border-radius: 4px; border-top: 4px solid #334155;">
+    <h3>📊 Alpha Recommendations</h3>
+    <ul style="margin-bottom: 20px;">
+        <li>Audit your digital asset security protocols.</li>
+        <li>Rebalance exposure based on volatility targets.</li>
+    </ul>
+    <a href="{EMPIRE_URL}" style="background: #334155; color: white; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 4px; font-size: 0.9rem;">ACCESS QUANT STRATEGY</a>
+</div>
+"""
+    return intro + body_content + conclusion
 
 def generate_seo_files(history):
     sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -58,64 +153,67 @@ def generate_seo_files(history):
 def create_final_html(topic, img_url, body_html, sidebar_html):
     return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="여기에_3호기_인증태그_입력" />
+    <meta name="google-site-verification" content="여기에_인증태그_입력" />
     <title>{topic} | {BLOG_TITLE}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {{ --neon-green: #39ff14; --dark-bg: #0a0a0a; --terminal-text: #00ff41; }}
-        body {{ font-family: 'Fira Code', monospace; background: var(--dark-bg); color: var(--terminal-text); line-height: 1.6; margin: 0; }}
-        header {{ border-bottom: 2px solid var(--neon-green); padding: 20px; text-align: center; background: #000; }}
-        .brand {{ font-size: 1.5rem; text-shadow: 0 0 10px var(--neon-green); }}
-        .container {{ max-width: 1300px; margin: 30px auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding: 0 20px; }}
-        @media(max-width: 1000px) {{ .container {{ grid-template-columns: 1fr; }} }}
-        main {{ background: #000; padding: 40px; border: 1px solid var(--neon-green); box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); }}
-        h1 {{ color: #fff; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px; }}
-        .content h2 {{ color: var(--neon-green); margin-top: 40px; text-transform: uppercase; }}
-        img {{ width: 100%; height: auto; border: 1px solid var(--neon-green); margin-bottom: 30px; filter: grayscale(50%) brightness(80%); }}
-        .side-card {{ background: #000; padding: 20px; border: 1px solid var(--neon-green); margin-bottom: 20px; }}
-        .btn {{ display: block; padding: 15px; background: var(--neon-green); color: #000; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 10px; }}
-        footer {{ text-align: center; padding: 50px; font-size: 0.8rem; border-top: 1px solid var(--neon-green); margin-top: 50px; opacity: 0.7; }}
-        .footer-links {{ margin-bottom: 15px; }}
-        .footer-links a {{ color: var(--neon-green); text-decoration: none; margin: 0 10px; cursor: pointer; }}
-        .amazon-disclaimer {{ font-size: 0.7rem; margin-top: 15px; font-style: italic; }}
-        .modal {{ display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }}
-        .modal-content {{ background: #000; margin: 15% auto; padding: 30px; width: 70%; max-width: 500px; border: 1px solid var(--neon-green); color: var(--neon-green); }}
-        .close {{ color: #fff; float: right; font-size: 24px; cursor: pointer; }}
+        /* 2호기 전용 테마: 실버/다크그레이/청록색(Cyan) */
+        :root {{ --main-dark: #1e293b; --accent-cyan: #06b6d4; --silver-bg: #f1f5f9; }}
+        body {{ font-family: 'Roboto Mono', monospace; background: var(--silver-bg); color: #334155; line-height: 1.7; margin: 0; }}
+        header {{ background: var(--main-dark); color: #fff; padding: 25px; text-align: center; border-bottom: 4px solid var(--accent-cyan); }}
+        .brand {{ font-family: 'Orbitron', sans-serif; font-size: 2rem; letter-spacing: 2px; text-transform: uppercase; }}
+        /* 표준 너비 1100px 적용 */
+        .container {{ max-width: 1100px; margin: 40px auto; display: grid; grid-template-columns: 1fr 320px; gap: 40px; padding: 0 20px; }}
+        @media(max-width: 900px) {{ .container {{ grid-template-columns: 1fr; }} }}
+        main {{ background: #fff; padding: 50px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 4px; }}
+        h1 {{ color: var(--main-dark); font-family: 'Orbitron', sans-serif; font-size: 2.0rem; margin-top:0; }}
+        .content h2 {{ color: #0f172a; margin-top: 40px; border-left: 5px solid var(--accent-cyan); padding-left: 15px; font-size: 1.4rem; font-weight: 700; }}
+        img {{ width: 100%; height: auto; margin-bottom: 30px; border-radius: 4px; filter: contrast(110%); }}
+        .side-card {{ background: #fff; padding: 25px; border: 1px solid #cbd5e1; margin-bottom: 20px; border-top: 4px solid var(--accent-cyan); }}
+        .btn {{ display: block; padding: 12px; background: var(--main-dark); color: #fff; text-decoration: none; font-weight: bold; text-align: center; margin-bottom: 10px; border-radius: 2px; font-size: 0.9rem; transition: 0.3s; }}
+        .btn:hover {{ background: var(--accent-cyan); color: #000; }}
+        footer {{ text-align: center; padding: 50px; color: #64748b; background: #fff; border-top: 1px solid #e2e8f0; margin-top: 50px; }}
+        .footer-links a {{ color: #475569; margin: 0 10px; cursor: pointer; text-decoration: none; font-weight: bold; }}
+        .amazon-disclaimer {{ font-size: 0.8rem; color: #94a3b8; margin-top: 20px; font-style: italic; }}
+        .modal {{ display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }}
+        .modal-content {{ background: #fff; margin: 15% auto; padding: 30px; width: 80%; max-width: 600px; border-radius: 4px; font-family: sans-serif; }}
+        .close {{ float: right; font-size: 28px; cursor: pointer; }}
     </style></head>
     <body>
-    <header><div class="brand">NEURAL_ALGORITHM_VAULT v2.6</div></header>
+    <header><div class="brand">{BLOG_TITLE}</div></header>
     <div class="container">
         <main>
-            <div style="font-size:0.8rem; margin-bottom:10px;">> DECRYPTING_TOPIC... [OK]</div>
+            <div style="color:#06b6d4; font-size:0.8rem; margin-bottom:10px; font-weight:bold;">// QUANTITATIVE ANALYSIS PROTOCOL</div>
             <h1>{topic}</h1><img src="{img_url}"><div class="content">{body_html}</div>
         </main>
         <aside class="sidebar">
             <div class="side-card">
-                <a href="{EMPIRE_URL}" class="btn" style="background:#ff0000; color:#fff;">🛑 EXECUTE_EXIT_PLAN</a>
-                <a href="{AFFILIATE_LINK}" class="btn">📉 SHORT_MARKET</a>
-                <a href="{AMAZON_LINK}" class="btn">🛡️ SECURE_ASSETS</a>
+                <h3 style="margin-top:0; color:var(--main-dark); font-family:'Orbitron';">SYSTEM ACCESS</h3>
+                <a href="{EMPIRE_URL}" class="btn">⚡ ALPHA STRATEGY</a>
+                <a href="{AFFILIATE_LINK}" class="btn" style="background:#334155;">📊 DATA TERMINAL</a>
+                <a href="{AMAZON_LINK}" class="btn" style="background:#06b6d4; color:#000;">🔒 COLD STORAGE</a>
             </div>
             <div class="side-card">
-                <h3 style="font-size:1rem;">> RECENT_SIGNALS</h3>
-                <ul style="list-style:none; padding:0; font-size:0.8rem;">{sidebar_html}</ul>
+                <h3>Incoming Signals</h3>
+                <ul style="padding-left:20px; list-style-type: square;">{sidebar_html}</ul>
             </div>
         </aside>
     </div>
     <footer>
         <div class="footer-links">
-            <a onclick="openModal('about')">[ABOUT_US]</a>
-            <a onclick="openModal('privacy')">[PRIVACY_POLICY]</a>
-            <a onclick="openModal('contact')">[CONTACT]</a>
+            <a onclick="openModal('about')">About Protocol</a>
+            <a onclick="openModal('privacy')">Data Privacy</a>
+            <a onclick="openModal('contact')">Contact Node</a>
         </div>
-        &copy; 2026 {BLOG_TITLE}. NOISE_REDUCTION_PROTOCOLS_ACTIVE.
-        <div class="amazon-disclaimer">* AS AN AMAZON ASSOCIATE, THIS NODE EARNS FROM QUALIFYING PURCHASES.</div>
+        &copy; 2026 {BLOG_TITLE}. Systems Online.
+        <div class="amazon-disclaimer">* As an Amazon Associate, we earn from qualifying purchases.</div>
     </footer>
     <div id="infoModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal()">&times;</span><div id="modalBody"></div></div></div>
     <script>
         const info = {{
-            about: "<h2>[ABOUT_NODE]</h2><p>Neural Algorithm is a decentralized intelligence hub monitoring global systemic risks and data sovereignty.</p>",
-            privacy: "<h2>[DATA_POLICY]</h2><p>Zero-knowledge tracking policy. Cookies are used for operational telemetry only.</p>",
-            contact: "<h2>[COMMS_CHANNEL]</h2><p>Secure link: <b>ops@neural-algorithm.io</b></p>"
+            about: "<h2>Alpha Intelligence</h2><p>Data-driven insights for the modern investor. We focus on quantitative strategies and asset security.</p>",
+            privacy: "<h2>Data Privacy</h2><p>We do not track personal identifiers. System logs are anonymized.</p>",
+            contact: "<h2>Contact</h2><p>Admin: admin@empire-analyst.digital</p>"
         }};
         function openModal(id) {{ document.getElementById('modalBody').innerHTML = info[id]; document.getElementById('infoModal').style.display = "block"; }}
         function closeModal() {{ document.getElementById('infoModal').style.display = "none"; }}
@@ -123,19 +221,24 @@ def create_final_html(topic, img_url, body_html, sidebar_html):
     </body></html>"""
 
 def main():
-    trends = get_live_trends()
-    topic = random.choice(trends)
-    body_text = generate_neural_report(topic) 
+    topic = get_live_trends()[0] 
+    body_text = generate_deep_report(topic) 
     html_body = markdown.markdown(body_text)
-    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('cyberpunk matrix green digital code hacker dark 8k')}?width=1200&height=600"
+    # 이미지: 2호기 전용 (실버/미래지향적/데이터)
+    img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote('futuristic financial data hud interface silver blue cyberpunk 8k')}?width=1200&height=600"
+    
     history = []
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f: history = json.load(f)
-    sidebar_html = "".join([f"<li><b style='color:var(--neon-green);'>#</b> <a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#00ff41; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
+    
+    sidebar_html = "".join([f"<li><a href='{BLOG_BASE_URL}{h.get('file','')}' style='color:#334155; text-decoration:none;'>{h.get('title')[:25]}...</a></li>" for h in history[:10]])
+    
     archive_name = f"post_{datetime.now().strftime('%Y%m%d_%H%M')}.html"
     history.insert(0, {"date": datetime.now().strftime("%Y-%m-%d"), "title": topic, "file": archive_name})
+    
     with open(HISTORY_FILE, "w", encoding="utf-8") as f: json.dump(history, f, indent=4)
     generate_seo_files(history)
+    
     full_html = create_final_html(topic, img_url, html_body, sidebar_html)
     with open("index.html", "w", encoding="utf-8") as f: f.write(full_html)
     with open(archive_name, "w", encoding="utf-8") as f: f.write(full_html)
